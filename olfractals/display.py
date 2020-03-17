@@ -100,7 +100,6 @@ class Screen(object):
         assert self.screen is not None, "Can't draw line if no screen opened"
         if fit: p1, p2 = self.fit_transform([p1, p2])
 
-        print(f"Draw line b/w {p1} and {p2}")
         color = self.line_params['color'] if color is None else color
         width = self.line_params['width'] if width is None else width
         pygame.draw.line(self.screen, color, p1, p2, width)
@@ -115,6 +114,9 @@ class Screen(object):
             points (matrix): points to fit in screen
             screen_ratio (matrix):
         """
+        # TODO: Add a mirror symmetry to reverse image
+        # # Required cause top of screen is at y=0
+
         # Compute rectangle containing all points
         x_min, x_max, y_min, y_max = np.inf, -np.inf, np.inf, -np.inf
         for x, y in points:
