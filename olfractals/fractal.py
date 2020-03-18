@@ -113,8 +113,8 @@ class Fractal(object):
         # Compute number of segments to iter on and draw only
         self.basis_output = self.b_func()
         to_iter, to_draw = self.basis_output
-        self.growth_info['rate'] = sum([len(points)-2 for points in to_iter])
-        self.growth_info['rest'] = sum([len(points)-2 for points in to_draw])
+        self.growth_info['rate'] = sum([len(points)-1 for points in to_iter])
+        self.growth_info['rest'] = sum([len(points)-1 for points in to_draw])
 
     def evaluate_growth(self, n):
         """Return number of segments after n iterations"""
@@ -179,6 +179,7 @@ if __name__ == "__main__":
         return [line], []
 
     fractal = Fractal(b_oper, as_basis=True)
+    assert fractal.growth_info == {'rate': 2, 'rest': 0}
     lines = fractal.compute_b(2)
     assert len(lines) == 1
     np.testing.assert_equal(lines[0], [
