@@ -77,7 +77,7 @@ def scale(points, factor, origin=ORIGIN):
 
 
 def transform(points, angle=None, factor=None, vector=None, origin=ORIGIN,
-              as_radian=False):
+              as_radian=False, decimals=3):
     """Full transformation on points (rotation, homothety and translation)
 
     Args:
@@ -87,6 +87,7 @@ def transform(points, angle=None, factor=None, vector=None, origin=ORIGIN,
         vector (2-float array)  : translation after other transformations
         origin (2-float array)  : origin of transformations
         as_radian (bool): if angle is given in radian, not degrees
+        decimals (int)  : round transformed points
     """
     assert not (factor is None and vector is None and angle is None), (
         "Expecting at least one transformation"
@@ -99,6 +100,8 @@ def transform(points, angle=None, factor=None, vector=None, origin=ORIGIN,
     if vector is not None:
         vector = to_array(vector)
         points += vector
+    if decimals and len(points):
+        points = np.round(points, decimals)
     return points
 
 
