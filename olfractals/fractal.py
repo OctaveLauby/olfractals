@@ -76,10 +76,15 @@ class Fractal(object):
         """
         self.b_func = func if as_basis else gen2basis(func)
         self._g_func = None if as_basis else func
+        self.cache = {
+            # iteration (int): (list of to-iter lines, list of to-draw lines)
+            0: (np.array([[[0, 0], [0, 1]]]), np.array([])),
+            1: self.b_func(),
+        }
 
         self.growth_info = {}
-        self.basis_output = None
         self._compute_info()
+
 
     @property
     def g_func(self):
@@ -94,6 +99,13 @@ class Fractal(object):
     @property
     def r(self):
         return self.growth_info['rest']
+
+    @property
+    def basis_output(self):
+        return self.cache[1]
+
+    # ----------------------------------------------------------------------- #
+    # Computation information
 
     def _compute_info(self):
         """Evaluate space complexity of basic fractal operation
@@ -111,7 +123,6 @@ class Fractal(object):
             For S0=1, K0=0          Un = q^n + r * q^(n-1)
         """
         # Compute number of segments to iter on and draw only
-        self.basis_output = self.b_func()
         to_iter, to_draw = self.basis_output
         self.growth_info['rate'] = sum([len(points)-1 for points in to_iter])
         self.growth_info['rest'] = sum([len(points)-1 for points in to_draw])
