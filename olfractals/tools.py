@@ -44,6 +44,13 @@ def line2seg(line):
     return (line[i:i+2] for i in range(n-1))
 
 
+def lines2seg(lines):
+    """Build iterable on segments defining the list of lines"""
+    for line in lines:
+        for segment in line2seg(line):
+            yield segment
+
+
 
 if __name__ == "__main__":
 

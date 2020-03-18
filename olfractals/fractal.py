@@ -14,8 +14,11 @@ We define 2 types of operations:
 import numpy as np
 from functools import wraps
 
-from .tools import compress, line2seg
+from .tools import compress, lines2seg
 from .transformations import get_params, transform
+
+
+BASIS_SEGMENT = np.array([[0, 0], [1, 0]])
 
 
 # --------------------------------------------------------------------------- #
@@ -26,7 +29,7 @@ def gen2basis(oper_g):
 
     @wraps(oper_g)
     def b_oper():
-        return oper_g((0, 0), (1, 0))
+        return oper_g(*BASIS_SEGMENT)
 
     doc = oper_g.__doc__
     b_oper.__doc__ = (
@@ -40,7 +43,7 @@ def gen2basis(oper_g):
 def basis2gen(b_oper):
     """Convert basis fractal operation into generic fractal operation"""
 
-    seg1 = np.array([[0, 0], [1, 0]])
+    seg1 = BASIS_SEGMENT
     to_iter_base, to_draw_base = b_oper()
 
     @wraps(b_oper)
@@ -78,7 +81,7 @@ class Fractal(object):
         self._g_func = None if as_basis else func
         self.cache = {
             # iteration (int): (list of to-iter lines, list of to-draw lines)
-            0: (np.array([[[0, 0], [0, 1]]]), np.array([])),
+            0: (np.array([BASIS_SEGMENT]), np.array([])),
             1: self.b_func(),
         }
 
@@ -131,6 +134,31 @@ class Fractal(object):
         """Return number of segments after n iterations"""
         return self.q**n + self.r*(self.q**(n-1))
 
+    # ----------------------------------------------------------------------- #
+    # Computation
+
+    def build_cache(self, n):
+        """Build cache up to iteration n"""
+        try:
+            return self.cache[n]
+        except KeyError:
+            pass
+
+        to_iter_b, to_draw_b = self.cache[1]            # base iteration
+        to_iter_p, to_draw_p = self.build_cache(n-1)    # previous iteration
+
+        # Apply previous iteration to each to-iter segment of base iteration
+        to_iter, to_draw = [], list(to_draw_p)
+        for seg_b in lines2seg(to_iter_b):
+            params = get_params(BASIS_SEGMENT, seg_b, as_radian=True)
+            for line_p in to_iter_p:
+                to_iter.append(transform(line_p, **params))
+            for line_p in to_draw_p:
+                to_draw.append(transform(line_p, **params))
+
+        result = compress(to_iter), compress(to_draw)
+        self.cache[n] = result
+        return result
 
     def compute_b(self, n, max_segments=1e7, concat=True):
         """Compute n iterations of basic fractal operation
@@ -153,26 +181,8 @@ class Fractal(object):
                 f" {max_segments} segments"
             )
 
-        basis_seg = np.array([(0, 0), (1, 0)])
-        if n <= 0:
-            return np.array([basis_seg]), np.array([])
-
-        to_iter_b, to_draw_b = self.basis_output
-        to_iter, to_draw = to_iter_b, to_draw_b
-        for i in range(n-1):
-            to_iter_new = []
-            for line in to_iter:
-                segments = line2seg(line)
-                for segment in segments:
-                    params = get_params(basis_seg, segment, as_radian=True)
-                    for l in to_iter_b:
-                        to_iter_new.append(transform(l, **params))
-                    for l in to_draw_b:
-                        to_draw.append(transform(l, **params))
-            to_iter = compress(to_iter_new)
-            to_draw = compress(to_draw)
-
-        if compress:
+        to_iter, to_draw = self.build_cache(n)
+        if concat:
             if len(to_iter) and len(to_draw):
                 return np.concatenate(to_iter, to_draw)
             else:
