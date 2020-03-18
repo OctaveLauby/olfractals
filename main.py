@@ -10,14 +10,11 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------- #
     # Fractal
 
-    print("Define fractal")
-    sin = np.sin(60 * np.pi / 180)
-    def b_oper():
-        line = np.array([[0, 0], [1/3, 0], [0.5, sin/3], [2/3, 0], [1, 0]])
-        return [line], []
-    iter_n = 8
+    from olfractals.collection import koch_snowflake_b
 
-    fractal = Fractal(b_oper, as_basis=True)
+    print("Define fractal")
+    iter_n = 5
+    fractal = Fractal(koch_snowflake_b, as_basis=True)
     for k, v in fractal.growth_info.items():
         print(f"\t| {k}={v}")
     print(f"\t| iterations={iter_n}")
