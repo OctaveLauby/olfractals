@@ -11,10 +11,16 @@ if __name__ == "__main__":
     # Fractal
 
     from olfractals.collection import koch_snowflake_b
+    fractal = Fractal(koch_snowflake_b, as_basis=True)
+    iter_n = 5
+    sin = np.sin(60 * np.pi / 180)
+    segments = [
+        ([0, 0], [0.5, sin]),
+        ([0.5, sin], [1, 0]),
+        ([1, 0], [0, 0]),
+    ]
 
     print("Define fractal")
-    iter_n = 5
-    fractal = Fractal(koch_snowflake_b, as_basis=True)
     for k, v in fractal.growth_info.items():
         print(f"\t| {k}={v}")
     print(f"\t| iterations={iter_n}")
@@ -23,7 +29,7 @@ if __name__ == "__main__":
     # Compute fractal
     t = time()
     print("Prepare fractal lines...", end="")
-    lines = fractal.compute_b(iter_n)
+    lines = fractal.compute_on(segments, iter_n)
     print(f" done in {time()-t}s")
 
 
