@@ -24,7 +24,6 @@ if __name__ == "__main__":
     t = time()
     print("Prepare fractal lines...", end="")
     lines = fractal.compute_b(iter_n)
-    line = lines[0]
     print(f" done in {time()-t}s")
 
 
@@ -36,7 +35,7 @@ if __name__ == "__main__":
     # Make points fit the screen
     t = time()
     print("Fit line...", end="")
-    params = screen.compute_fit_params(line)
+    params = screen.compute_fit_params(np.concatenate(lines))
     print(f" done in {time()-t}s")
     for k, v in params.items():
         print(f"\t| {k}={v}")
@@ -45,7 +44,8 @@ if __name__ == "__main__":
     t = time()
     print("Draw line...", end="")
     screen.open()
-    screen.draw_line(line)
+    for line in lines:
+        screen.draw_line(line)
     print(f" done in {time()-t}s")
 
     screen.wait_close()
