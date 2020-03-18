@@ -160,6 +160,7 @@ class Fractal(object):
         self.cache[n] = result
         return result
 
+
     def compute_b(self, n, max_segments=1e7, concat=True):
         """Compute n iterations of basic fractal operation
 
@@ -189,6 +190,24 @@ class Fractal(object):
                 return to_iter
         else:
             return to_iter, to_draw
+
+    def compute_on(self, segments, n):
+        """Compute n iterations of basic fractal operation
+
+        Args:
+            segments (list): list of segments (2-float-tuple)
+            n (int): number of iteration to compute
+
+        Return:
+            (list): list of lines to draw
+        """
+        b_lines = self.compute_b(n, concat=True)
+        lines = []
+        for segment in segments:
+            params = get_params(BASIS_SEGMENT, segment, as_radian=True)
+            for line in b_lines:
+                lines.append(transform(line, **params))
+        return compress(lines)
 
 
 if __name__ == "__main__":
