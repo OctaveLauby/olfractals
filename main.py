@@ -10,15 +10,10 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------- #
     # Fractal
 
-    from olfractals.collection import koch_snowflake_b
-    fractal = Fractal(koch_snowflake_b, as_basis=True)
-    iter_n = 5
-    sin = np.sin(60 * np.pi / 180)
-    segments = [
-        ([0, 0], [0.5, sin]),
-        ([0.5, sin], [1, 0]),
-        ([1, 0], [0, 0]),
-    ]
+    from olfractals.collection import BasisOperation, StartSegment
+    fractal = Fractal(BasisOperation.koch_snowflake_b, as_basis=True)
+    segments = StartSegment.triangle
+    iter_n = 8
 
     print("Define fractal")
     for k, v in fractal.growth_info.items():
