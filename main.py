@@ -11,7 +11,7 @@ if __name__ == "__main__":
     # Fractal
 
     from olfractals.collection import BasisOperation, StartSegment
-    fractal = Fractal(BasisOperation.koch_snowflake_b, as_basis=True)
+    fractal = Fractal(BasisOperation.koch_snowflake(), as_basis=True)
     segments = StartSegment.triangle
     iter_n = 8
 

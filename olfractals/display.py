@@ -2,7 +2,8 @@ import numpy as np
 import pygame
 from threading import Thread
 
-from .tools import line2seg, wait_until
+from .lines import line2seg
+from .tools import wait_until
 from .transformations import transform
 
 COLORS = {
@@ -151,7 +152,6 @@ class Screen(object):
 
 
 if __name__ == "__main__":
-    import numpy as np
     screen = Screen()
     line = np.array([[0, 1], [1, 1], [1, 0], [2, 1]])
 
