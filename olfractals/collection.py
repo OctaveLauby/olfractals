@@ -1,6 +1,7 @@
 import numpy as np
+from copy import deepcopy
+from functools import wraps
 
-from .operations import operation
 
 def cos(deg):
     return np.cos(deg * np.pi / 180)
@@ -13,8 +14,36 @@ def sin(deg):
 
 class BasisOperation:
 
+    @classmethod
+    def configured(cls, mthd=None, **params):
+        """Return method working with given default parameters"""
+
+        if isinstance(mthd, str):
+            try:
+                mthd = getattr(cls, mthd)
+            except AttributeError:
+                raise ValueError(
+                    f"Unknown basic operation name '{mthd}'"
+                    f", make sure to use a mthd name from {cls.__name__}"
+
+                )
+
+        @wraps(mthd)
+        def wrapped(*args, **kwargs):
+            parameters = deepcopy(params)
+            parameters.update(kwargs)
+            return mthd(*args, **parameters)
+
+        doc = "" if mthd.__doc__ is None else mthd.__doc__
+        wrapped.__doc__ = doc + (
+            f"\n..about:: following default values are modified: {params}"
+        )
+
+        return wrapped
+
     @staticmethod
     def double_arrow():
+        """Basic fractal operation to draw a """
         line = 1/4 * np.array([
             (0, 0), (0,-1), (-1, 0), (0, 1), (2, 0),
             (4, -1), (5, 0), (4, 1), (4, 0)
@@ -22,10 +51,15 @@ class BasisOperation:
         return [line], []
 
     @staticmethod
-    def double_slide():
-        factor = 1/8
-        line1 = np.array([(0, 0), (1/2, factor)])
-        line2 = np.array([(1/2, -factor), (1,0)])
+    def dragon(elbow_x=1/2, elbow_y=1/2):
+        """Basic fractal operation to draw a dragon
+
+        Good params to try:
+            elbow_x=3/5, elbow_y=2/5
+        """
+        elbow = [elbow_x, elbow_y]
+        line1 = np.array([[0, 0], elbow])
+        line2 = np.array([[1, 0], elbow])
         return [line1, line2], []
 
     @staticmethod
@@ -41,13 +75,18 @@ class BasisOperation:
         return [line], []
 
     @staticmethod
-    def tree():
-        """"""
+    def leaf():
+        """Basic fractal operation to draw a leaf"""
         trunk = 1 / 5 * np.array([(0, 0), (2, 0)])
-        branch1 = 1 / 5 * np.array([(2, 0), (5, 1)])
-        branch2 = 1 / 5 * np.array([(2, 0), (5, -2)])
-        return [branch1, branch2], [trunk]
 
+        bases = []
+        leafs = []
+        origin = trunk[1]
+        for vector in  1/5 * np.array([(1, 2), (3, 1), (2, -2)]):
+            sep = origin + 1/3 * vector
+            bases.append(np.array([origin, sep]))
+            leafs.append(np.array([sep, origin + vector]))
+        return leafs, [trunk] + bases
 
 
 class StartSegment:

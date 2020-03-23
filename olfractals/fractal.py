@@ -18,6 +18,9 @@ from .operations import basis2gen, gen2basis
 from .transformations import get_params, transform
 
 
+MAX_SEGMENTS= 1e7
+
+
 # --------------------------------------------------------------------------- #
 # Fractal class
 
@@ -90,6 +93,13 @@ class Fractal(object):
         """Return number of segments after n iterations"""
         return self.q**n + self.r*(self.q**(n-1))
 
+    def max_iter(self, max_segments=MAX_SEGMENTS):
+        """Return max number of iterations to stay below max nb of segments"""
+        n = 0
+        while self.evaluate_growth(n) <= max_segments:
+            n += 1
+        return (n-1)
+
     # ----------------------------------------------------------------------- #
     # Computation
 
@@ -116,7 +126,7 @@ class Fractal(object):
         self.cache[n] = result
         return result
 
-    def compute_b(self, n, max_segments=1e7, concat=True):
+    def compute_b(self, n, max_segments=MAX_SEGMENTS, concat=True):
         """Compute n iterations of basic fractal operation
 
         Args:

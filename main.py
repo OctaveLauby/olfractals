@@ -11,9 +11,16 @@ if __name__ == "__main__":
     # Fractal
 
     from olfractals.collection import BasisOperation, StartSegment
-    fractal = Fractal(BasisOperation.koch_snowflake(), as_basis=True)
-    segments = StartSegment.triangle
-    iter_n = 8
+    params = {
+        'elbow_x': 3/5,
+        'elbow_y': 2/5,
+    }
+    fractal = Fractal(
+        BasisOperation.configured(BasisOperation.dragon, **params),
+        as_basis=True,
+    )
+    segments = StartSegment.horizontal
+    iter_n = fractal.max_iter(max_segments=1e5)
 
     print("Define fractal")
     for k, v in fractal.growth_info.items():
