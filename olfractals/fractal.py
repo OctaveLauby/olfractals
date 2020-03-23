@@ -19,6 +19,7 @@ from .transformations import get_params, transform
 
 
 MAX_SEGMENTS= 1e7
+MAX_ITER = object()
 
 
 # --------------------------------------------------------------------------- #
@@ -131,6 +132,8 @@ class Fractal(object):
 
         Args:
             n (int): number of iteration to compute
+                MAX_ITER to iter as many times as possible
+                    before reaching max_segments
             max_segments (int): max number of segments allowed for computation
                 1e7 is the limit where transformation computation and drawing
                 start to take too much time (10s for matrix transformation and
@@ -141,6 +144,7 @@ class Fractal(object):
             (matrix) if concat
             (2-matrix-tuple) if not concat
         """
+        n = self.max_iter(max_segments) if n is MAX_ITER  else n
         if max_segments and self.evaluate_growth(n) > max_segments:
             raise SafetyError(
                 f"Computing {n} iteration(s) will create more than"

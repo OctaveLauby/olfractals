@@ -3,24 +3,31 @@
 
 if __name__ == "__main__":
     import numpy as np
-    from olfractals import Fractal, Screen
+    from olfractals import Fractal, Screen, MAX_ITER
+    from olfractals.collection import BasisOperation, StartSegment
     from time import time
+
+
+    # ---------------------------------------------------------------------- #
+    # Params
+
+    func = BasisOperation.dragon
+    params = {
+        'elbow_x': 3 / 5,
+        'elbow_y': 2 / 5,
+    }
+    segments = StartSegment.horizontal
+    iter_n = MAX_ITER
 
 
     # ---------------------------------------------------------------------- #
     # Fractal
 
-    from olfractals.collection import BasisOperation, StartSegment
-    params = {
-        'elbow_x': 3/5,
-        'elbow_y': 2/5,
-    }
     fractal = Fractal(
-        BasisOperation.configured(BasisOperation.dragon, **params),
+        BasisOperation.configured(func, **params),
         as_basis=True,
     )
-    segments = StartSegment.horizontal
-    iter_n = fractal.max_iter(max_segments=1e5)
+    iter_n = fractal.max_iter(1e5) if iter_n is MAX_ITER  else iter_n
 
     print("Define fractal")
     for k, v in fractal.growth_info.items():
