@@ -52,20 +52,3 @@ def lines2seg(lines):
     for line in lines:
         for segment in line2seg(line):
             yield segment
-
-
-if __name__ == "__main__":
-
-    l1 = np.array([[0, 1], [1, 1]])
-    l2 = np.array([[1, 1], [1, 0], [2, 1]])
-    assert_is_line(l1)
-    assert_is_line(l2)
-    lines = compress([l1, l2])
-    assert len(lines) == 1
-    line = lines[0]
-    np.testing.assert_equal(line, [[0, 1], [1, 1], [1, 0], [2, 1]])
-
-    line = np.array([[0, 1], [1, 1], [1, 0], [2, 1]])
-    points = [[(0, 1), (1, 1)], [(1, 1), (1, 0)], [(1, 0), (2, 1)]]
-    for cseg, eseg in zip(line2seg(line), points):
-        np.testing.assert_equal(cseg, eseg)
