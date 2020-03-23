@@ -63,6 +63,13 @@ class BasisOperation:
         return [line1, line2], []
 
     @staticmethod
+    def eve_dragon():
+        """Basic fractal operation to draw eve dragon"""
+        line1 = np.array([[0, 0], [0, 1/2], [1/2, 0]])
+        line2 = np.array([[1, 0], [1/2, 0]])
+        return [line1, line2], []
+
+    @staticmethod
     def koch_snowflake():
         """Basic fractal operation to draw a koch snowflake_b"""
         line = np.array([[0, 0], [1 / 3, 0], [0.5, sin(60) / 3], [2 / 3, 0], [1, 0]])
